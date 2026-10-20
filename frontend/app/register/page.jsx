@@ -1,9 +1,9 @@
-
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import API_URL from "@/lib/api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function RegisterPage() {
 
     try {
       const response = await fetch(
-        'http://localhost:2662/api/auth/register',
+        `${API_URL}/auth/login`,
         {
           method: 'POST',
           headers: {

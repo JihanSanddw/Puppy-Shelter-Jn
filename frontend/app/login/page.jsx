@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import API_URL from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function LoginPage() {
 
     try {
       const response = await fetch(
-        'http://localhost:2662/api/auth/login',
+        `${API_URL}/auth/login`,
         {
           method: 'POST',
           headers: {

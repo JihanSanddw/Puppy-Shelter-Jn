@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-const API = 'http://localhost:2662/api';
+const API = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:2662/api')
+  .replace(/\/$/, '');  
 
 const emptyForm = {
   nama_puppy: '',
@@ -58,48 +59,37 @@ export default function PuppyLibrary() {
   }
 
   useEffect(() => {
-    let ignore = false;
-
     async function fetchData() {
-        try {
+      try {
+        setLoading(true);
+        setError('');
+
         const [shelterResponse, puppyResponse] = await Promise.all([
-            fetch(`${API}/shelter`),
-            fetch(`${API}/puppy`),
+          fetch(`${API}/shelter`),
+          fetch(`${API}/puppy`),
         ]);
 
         if (!shelterResponse.ok || !puppyResponse.ok) {
-            throw new Error('Gagal mengambil data.');
+          throw new Error('Gagal mengambil data.');
         }
 
         const [shelterResult, puppyResult] = await Promise.all([
-            shelterResponse.json(),
-            puppyResponse.json(),
+          shelterResponse.json(),
+          puppyResponse.json(),
         ]);
 
-        if (!ignore) {
-            setShelters(shelterResult.data || []);
-            setPuppies(puppyResult.data || []);
-            setError('');
-        }
-        } catch (err) {
-        if (!ignore) {
-            setError(
-            'Data gagal dimuat. Pastikan backend Express dan database berjalan.'
-            );
-        }
-        } finally {
-        if (!ignore) {
-            setLoading(false);
-        }
-        }
+        setShelters(shelterResult.data || []);
+        setPuppies(puppyResult.data || []);
+      } catch (error) {
+        console.error('Fetch error:', error);
+        setError('Data gagal dimuat. Periksa koneksi backend.');
+      } finally {
+        setLoading(false);
+      }
     }
 
     fetchData();
-
-    return () => {
-        ignore = true;
-    };
-    }, []);
+  }, []);
 
   const filteredPuppies = useMemo(() => {
     const keyword = search.toLowerCase();
