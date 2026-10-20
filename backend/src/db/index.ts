@@ -1,5 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
+import "dotenv/config";
 import mysql from "mysql2/promise";
 
 const connection = mysql.createPool({
